@@ -1,4 +1,3 @@
-
 #include <raylib.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,6 +11,7 @@
 #define STD_SIZE_Y 32
 #define LARGURA_BALA 10
 #define ALTURA_BALA 15
+#define MAX_INPUT_CHARS 10  
 
 int tirodado=0;
 int fimdejogo=0;
@@ -83,6 +83,8 @@ void DesenhaBalah(Jogo *j);
 int ColisaoBalash(Jogo *j);
 void ColisaoBordasHeroi(Jogo *j);
 
+
+
 int main(){
     InitAudioDevice();
 
@@ -97,7 +99,7 @@ int main(){
     CarregaImagens(&jogo);
     Music musicaJogo = LoadMusicStream("assets/musica.mp3");
     PlayMusicStream(musicaJogo);
-
+  
     while(!WindowShouldClose()){
         UpdateMusicStream(musicaJogo);
         AtualizaFrameDesenho(&jogo);
@@ -110,11 +112,12 @@ int main(){
 
 void IniciaJogo(Jogo *j){
     j->tempoAnimacao = GetTime();
-
+    
     j->heroi.pos = (Rectangle) {LARGURA_JANELA/2 - STD_SIZE_X/2, ALTURA_JANELA - STD_SIZE_Y -10, STD_SIZE_X, STD_SIZE_Y};
     j->heroi.color = BLUE;
     j->heroi.bala.ativa=0;
     j->heroi.bala.velocidade=7;
+    j->heroi.bala.tiro = LoadSound("assets/shoot.wav");
     j->nave.pos = (Rectangle) {0, 15, STD_SIZE_X, STD_SIZE_Y};
     j->nave.color = RED;
     j->nave.velocidade = 3;
@@ -154,13 +157,7 @@ void AtualizaJogo(Jogo *j){
                 fimdejogo=1;
         }
     }
-    if (tirodado == 1) {
-                DrawText("Você Perdeu", 340, 100, 20, RED);
-                fimdejogo=1;
-        } else if (tirodado == 2) {
-                DrawText("Você Ganhou", 340, 100, 20, GREEN);
-                fimdejogo=1;
-        }
+    
 }
     
 
@@ -240,6 +237,7 @@ if(j->heroi.bala.ativa == 0 && IsKeyPressed(KEY_SPACE)){
         j->heroi.bala.pos = (Rectangle){j->heroi.pos.x+j->heroi.pos.width/2, j->heroi.pos.y+j->heroi.pos.height/2, 
         LARGURA_BALA, ALTURA_BALA};
         j->heroi.bala.ativa = 1;
+        PlaySound(j->heroi.bala.tiro);
     }
     else if(ColisaoBalash(j)){
         j->heroi.bala.ativa=0;
@@ -314,6 +312,7 @@ int ColisaoBalash(Jogo *j){
 
     if(CheckCollisionRecs(j->heroi.bala.pos, j->bordas[0].pos)){
          j-> heroi.bala.ativa=0;
+         tirodado=0;
         return 1;
     }
     return 0;
