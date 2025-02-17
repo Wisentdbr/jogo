@@ -243,15 +243,16 @@ void AtualizaJogo(Jogo *j){
         Telas(j);
     }
     if(j->telas == 1){
-        if(j->heroi.hp == 0){
-            j->telas = 3;
-        }
-        EndDrawing();
         AtiraBalasHeroi(j);
         AtualizadorNaves(j);
         DrawText(TextFormat("Vidas: %d", j->heroi.hp), 11, 12, 15, PURPLE);
         DrawText(TextFormat("Pontos: %d", j->pontos), 11, 25, 15, PURPLE);
         DesenhaJogo(j);
+    }
+    if(j->heroi.hp == 0){
+        j->telas = 3;
+        EndDrawing();
+        ClearBackground(BLACK);
     }
 }
 
@@ -454,6 +455,3 @@ for(int i = 0; i < 4; i++){
                 }
             }
         }
-
-    
-
